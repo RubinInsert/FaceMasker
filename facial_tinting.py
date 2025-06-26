@@ -51,12 +51,19 @@ def colorTint(image_path, LAB_Color_Tint):
     lab = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2LAB)
     # Split LAB channels
     L, A, B = cv2.split(lab)
+    L = L.astype(np.int16)
+    A = A.astype(np.int16)
+    B = B.astype(np.int16)
     # Create a boolean mask (True where skin/ears/nose/neck)
     mask_bool = mask.astype(bool)
     # Shift the individual channels by input Tint
     L[mask_bool] = np.clip(L[mask_bool] + Tint_L, 0, 255)
     A[mask_bool] = np.clip(A[mask_bool] + Tint_A, 0, 255)
     B[mask_bool] = np.clip(B[mask_bool] + Tint_B, 0, 255)
+
+    L = L.astype(np.uint8)
+    A = A.astype(np.uint8)
+    B = B.astype(np.uint8)
     # Merge back into color vector
     lab_tinted = cv2.merge([L, A, B])
 

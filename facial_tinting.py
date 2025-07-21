@@ -35,9 +35,8 @@ def get_parsing_map(image_path):
 
     return parsing, image
 
-def colorTint(image_path, LAB_Color_Tint):
+def colorTint(parsing_map, image_rgb, LAB_Color_Tint):
     Tint_L, Tint_A, Tint_B = LAB_Color_Tint
-    parsing_map, image_rgb = get_parsing_map(image_path)
     # Mapping is not the same as detailed in https://github.com/switchablenorms/CelebAMask-HQ/tree/master/face_parsing
     #         atts = ['skin', 'l_brow', 'r_brow', 'l_eye', 'r_eye', 'eye_g', 'l_ear', 'r_ear', 'ear_r',
     #                 'nose', 'mouth', 'u_lip', 'l_lip', 'neck', 'neck_l', 'cloth', 'hair', 'hat']
@@ -45,10 +44,8 @@ def colorTint(image_path, LAB_Color_Tint):
     mask = np.zeros_like(parsing_map, dtype=np.uint8)
     for label in skin_labels:
         mask[parsing_map == label] = 255
-    # Convert original RGB image to BGR for Open CV processing
-    image_bgr = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
     # Convert image to LAB color space
-    lab = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2LAB)
+    lab = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2Lab)
     # Split LAB channels
     L, A, B = cv2.split(lab)
     L = L.astype(np.int16)
@@ -67,9 +64,6 @@ def colorTint(image_path, LAB_Color_Tint):
     # Merge back into color vector
     lab_tinted = cv2.merge([L, A, B])
 
-    # Convert back to BGR
-    bgr_tinted = cv2.cvtColor(lab_tinted, cv2.COLOR_LAB2BGR)
-
     # Convert back to RGB for display or further processing if you want
-    rgb_tinted = cv2.cvtColor(bgr_tinted, cv2.COLOR_BGR2RGB)
+    rgb_tinted = cv2.cvtColor(lab_tinted, cv2.COLOR_LAB2RGB)
     return rgb_tinted

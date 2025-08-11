@@ -9,7 +9,7 @@ from FaceParsing.model import BiSeNet  # your BiSeNet implementation file
 # Pretrained model: https://github.com/zllrunning/face-parsing.PyTorch
 # Load model and weights (adjust path as needed)
 net = BiSeNet(n_classes=19)  # 19 classes for CelebAMask-HQ
-net.load_state_dict(torch.load('FaceParsing/79999_iter.pth', map_location='cpu')) # Load Pre-trained model
+net.load_state_dict(torch.load('FaceParsing/79999_iter.pth', map_location='cpu', weights_only=True)) # Load Pre-trained model
 net.eval()
 
 

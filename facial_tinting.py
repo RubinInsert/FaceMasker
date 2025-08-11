@@ -41,26 +41,30 @@ def colorTint(parsing_map, image_rgb, LAB_Color_Tint):
     #         atts = ['skin', 'l_brow', 'r_brow', 'l_eye', 'r_eye', 'eye_g', 'l_ear', 'r_ear', 'ear_r',
     #                 'nose', 'mouth', 'u_lip', 'l_lip', 'neck', 'neck_l', 'cloth', 'hair', 'hat']
     skin_labels = [1, 7, 8, 10, 14]  # Include Skin, Ears, Nose, and Neck
-    mask = np.zeros_like(parsing_map, dtype=np.uint8)
+    mask = np.zeros(parsing_map.shape, dtype=np.float32)
     for label in skin_labels:
-        mask[parsing_map == label] = 255
-    # Convert image to LAB color space
-    lab = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2Lab)
-    # Split LAB channels
-    L, A, B = cv2.split(lab)
-    L = L.astype(np.int16)
-    A = A.astype(np.int16)
-    B = B.astype(np.int16)
-    # Create a boolean mask (True where skin/ears/nose/neck)
-    mask_bool = mask.astype(bool)
-    # Shift the individual channels by input Tint
-    L[mask_bool] = np.clip(L[mask_bool] + Tint_L, 0, 255)
-    A[mask_bool] = np.clip(A[mask_bool] + Tint_A, 0, 255)
-    B[mask_bool] = np.clip(B[mask_bool] + Tint_B, 0, 255)
+        mask[parsing_map == label] = 1.0
 
-    L = L.astype(np.uint8)
-    A = A.astype(np.uint8)
-    B = B.astype(np.uint8)
+    # Apply Gaussian blur to soften the edges of the mask
+    mask = cv2.GaussianBlur(mask, (25, 25), 0)  # Adjust kernel size as needed
+    mask = np.clip(mask, 0, 1)  # Ensure mask values are in [0,1]
+
+    # Convert image to LAB
+    lab = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2Lab)
+    L, A, B = cv2.split(lab)
+    L = L.astype(np.float32)
+    A = A.astype(np.float32)
+    B = B.astype(np.float32)
+
+    # Apply tint scaled by the soft mask (like alpha blending)
+    L += Tint_L * mask
+    A += Tint_A * mask
+    B += Tint_B * mask
+
+    # Clip and convert back to uint8
+    L = np.clip(L, 0, 255).astype(np.uint8)
+    A = np.clip(A, 0, 255).astype(np.uint8)
+    B = np.clip(B, 0, 255).astype(np.uint8)
     # Merge back into color vector
     lab_tinted = cv2.merge([L, A, B])
 

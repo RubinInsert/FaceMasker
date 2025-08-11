@@ -1,6 +1,3 @@
-# ---------------------------------------------------------------------------
-# imports you already listed – nothing new at the top level
-# ---------------------------------------------------------------------------
 import numpy as np
 from facial_tinting import get_parsing_map, colorTint   # already present
 from itertools import product
@@ -10,9 +7,7 @@ import pandas as pd
 import cv2, os, concurrent.futures as cf
 
 
-# ---------------------------------------------------------------------------
 # helper: discover every existing portrait  …/Mx.png
-# ---------------------------------------------------------------------------
 GENDERS     = ["Male", "Female"]
 ETHNICITIES = ["Caucasian", "African", "Asian"]
 AGE_RANGES  = ["18-24", "25-34", "35-44", "45-54", "55-64", "65 and over"]

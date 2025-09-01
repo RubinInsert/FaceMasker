@@ -112,9 +112,9 @@ def parseMorphs(inputFolder, outputFolder, LAB_Color_Tint, max_workers=None):
 # Show results
 if __name__ == "__main__":
     # parseMorphs("example_dir", "example_out/Exp1 (1.5 Step)", LAB_Color_Tint=(1.5, 0, 0), max_workers=None) #2.36 Change instead
-    parseMorphs("example_dir", "example_out/Exp1", LAB_Color_Tint=(2.36, 0, 0), max_workers=4)
-    parseMorphs("example_dir", "example_out/Exp2", LAB_Color_Tint=(0, 0, 1.23), max_workers=4)
-    parseMorphs("example_dir", "example_out/Exp3", LAB_Color_Tint=(2.36, 0, 1.23), max_workers=4)
+    #parseMorphs("example_dir", "example_out/Exp1", LAB_Color_Tint=(2.36, 0, 0), max_workers=4)
+    parseMorphs("example_dir2", "example_out/Exp2", LAB_Color_Tint=(0, 0, 1.23), max_workers=4)
+    #parseMorphs("example_dir", "example_out/Exp3", LAB_Color_Tint=(2.36, 0, 1.23), max_workers=4)
     # parseMorphs("example_dir", "example_out/Exp2", LAB_Color_Tint=(0, 0, 1.23), max_workers=None)
     # parseMorphs("example_dir", "example_out/Exp3", LAB_Color_Tint=(1.5, 0, 1.23), max_workers=None)
 cv2.waitKey(0)

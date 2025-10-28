@@ -109,13 +109,31 @@ def parseMorphs(inputFolder, outputFolder, LAB_Color_Tint, max_workers=None):
 
 
 
-# Show results
+import argparse
+
 if __name__ == "__main__":
-    # parseMorphs("example_dir", "example_out/Exp1 (1.5 Step)", LAB_Color_Tint=(1.5, 0, 0), max_workers=None) #2.36 Change instead
-    #parseMorphs("example_dir", "example_out/Exp1", LAB_Color_Tint=(2.36, 0, 0), max_workers=4)
-    parseMorphs("example_dir2", "example_out/Exp2", LAB_Color_Tint=(0, 0, 1.23), max_workers=4)
-    #parseMorphs("example_dir", "example_out/Exp3", LAB_Color_Tint=(2.36, 0, 1.23), max_workers=4)
-    # parseMorphs("example_dir", "example_out/Exp2", LAB_Color_Tint=(0, 0, 1.23), max_workers=None)
-    # parseMorphs("example_dir", "example_out/Exp3", LAB_Color_Tint=(1.5, 0, 1.23), max_workers=None)
+    parser = argparse.ArgumentParser(description="Run parseMorphs with specified parameters.")
+    parser.add_argument("-input", required=True, help="Input directory containing images or morph data")
+    parser.add_argument("-output", required=True, help="Output directory for processed results")
+    parser.add_argument("-color_tint", required=True, help="LAB color tint as three comma-separated floats (e.g., 2.36,0,1.23)")
+    parser.add_argument("-thread_count", type=int, default=None, help="Number of worker threads (default: None for auto)")
+
+    args = parser.parse_args()
+
+    # Parse LAB color tint (convert "2.36,0,1.23" → (2.36, 0, 1.23))
+    try:
+        lab_tint = tuple(float(x) for x in args.color_tint.split(","))
+        if len(lab_tint) != 3:
+            raise ValueError
+    except ValueError:
+        raise ValueError("Invalid format for -color_tint. Use three comma-separated numbers, e.g. 1.5,0,1.23")
+
+    parseMorphs(
+        args.input,
+        args.output,
+        LAB_Color_Tint=lab_tint,
+        max_workers=args.thread_count
+    )
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()

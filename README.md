@@ -29,7 +29,11 @@ Zip File
 git clone https://github.com/RubinInsert/FaceMasker
 ```
 2. OR, Download it manually from github
-3. Install the requirements
+3. Move into the directory with the python code On Windows, this would be:
+```
+cd <Folder Directory>
+```
+5. Install the requirements
 ```
 pip install -r requirements.txt
 ```
@@ -53,7 +57,7 @@ Input Folder
 ```
 5. Run the program using
 ```python
-python3 main -input "Example_Folder_Input/" -output "Example_Folder_Output/" -color_tint 2.36,0,0 -thread_count 2
+python3 main.py -input "Example_Folder_Input/" -output "Example_Folder_Output/" -color_tint 2.36,0,0 -thread_count 2
 ```
 `input` dictates the input folder
 

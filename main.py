@@ -1,11 +1,11 @@
 import numpy as np
 from facial_tinting import get_parsing_map, colorTint   # already present
 from itertools import product
-from pathlib import Path
 from tqdm.auto import tqdm
 import pandas as pd
 import cv2, os, concurrent.futures as cf
-
+import re
+from pathlib import Path
 
 # helper: discover every existing portrait  …/Mx.png
 GENDERS     = ["Male", "Female"]
@@ -14,17 +14,32 @@ AGE_RANGES  = ["18-24", "25-34", "35-44", "45-54", "55-64", "65 and over"]
 
 def find_source_images(root):
     root = Path(root)
-    pattern = [f"M{i}.png" for i in range(1, 11)]
     files = []
+    pattern = re.compile(r"^M(\d+)\.png$")  # matches M1.png, M25.png, etc.
+
     for g in GENDERS:
         for e in ETHNICITIES:
             for a in AGE_RANGES:
                 folder = root / g / e / a
-                for p in pattern:
-                    f = folder / p
-                    if f.exists():
-                        files.append(f)
+                if not folder.exists():
+                    continue
+
+                # collect matches in this folder
+                folder_matches = []
+                for f in folder.iterdir():
+                    if f.is_file():
+                        m = pattern.match(f.name)
+                        if m:
+                            folder_matches.append((int(m.group(1)), f))
+
+                # sort by the numeric part (M-number)
+                folder_matches.sort(key=lambda x: x[0])
+
+                # extend into the main list
+                files.extend(f for _, f in folder_matches)
+
     return files
+
 
 def _get_average_color(image_lab, mask):
     if mask.dtype != bool:
